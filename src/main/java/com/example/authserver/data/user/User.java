@@ -8,11 +8,12 @@ import javax.persistence.Id;
 @Entity
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
     @Id
-    private String id;
+    private Long id;
 
     private String login;
 
@@ -20,5 +21,5 @@ public class User {
 
     private String password;
 
-    private boolean isEmailValidated;
+    private boolean isEmailConfirmed;
 }

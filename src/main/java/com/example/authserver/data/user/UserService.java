@@ -2,6 +2,7 @@ package com.example.authserver.data.user;
 
 import com.example.authserver.data.user.dto.request.CreateUserDto;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -10,9 +11,10 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class UserService {
+    private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public User loadUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return findUserByEmail(email).orElseThrow(EntityNotFoundException::new);
     }
 
@@ -24,9 +26,14 @@ public class UserService {
         var newUser = User.builder()
                 .email(createUserDto.email())
                 .login(createUserDto.login())
-                .password(createUserDto.password())
+                .password(passwordEncoder.encode(createUserDto.password()))
                 .build();
 
         return userRepository.save(newUser);
+    }
+
+    public void setEmailConfirmed(User user) {
+        user.setEmailConfirmed(true);
+        userRepository.save(user);
     }
 }

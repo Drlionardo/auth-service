@@ -14,7 +14,7 @@ public class UserMapper {
         return UserDto.builder()
                 .login(user.getUsername())
                 .email(user.getEmail())
-                .isEmailValidated(user.isEmailValidated())
+                .isEmailConfirmed(user.isEmailConfirmed())
                 .build();
     }
 

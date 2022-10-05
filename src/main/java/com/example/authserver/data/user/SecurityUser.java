@@ -24,9 +24,7 @@ public final class SecurityUser implements UserDetails {
     public String getEmail() {
         return user.getEmail();
     }
-    public boolean isEmailValidated() {
-        return user.isEmailValidated();
-    }
+
     @Override
     public String getPassword() {
         return user.getPassword();
@@ -39,7 +37,11 @@ public final class SecurityUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isEmailValidated();
+        return user.isEmailConfirmed();
+    }
+
+    public boolean isEmailConfirmed() {
+        return user.isEmailConfirmed();
     }
 
     @Override
