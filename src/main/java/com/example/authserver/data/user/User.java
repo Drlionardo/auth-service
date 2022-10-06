@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Builder
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "usr")
 public class User {
     @Id
     private Long id;
@@ -21,5 +23,5 @@ public class User {
 
     private String password;
 
-    private boolean isEmailConfirmed;
+    private boolean emailConfirmed;
 }

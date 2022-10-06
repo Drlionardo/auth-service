@@ -1,10 +1,12 @@
 package com.example.authserver.data.user;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@Getter
 public final class SecurityUser implements UserDetails {
     private final User user;
 
@@ -19,6 +21,10 @@ public final class SecurityUser implements UserDetails {
 
     public String getLogin() {
         return user.getLogin();
+    }
+
+    public Long getId() {
+        return user.getId();
     }
 
     public String getEmail() {
