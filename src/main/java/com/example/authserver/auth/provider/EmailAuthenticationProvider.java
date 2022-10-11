@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class EmailAuthenticationProvider implements AuthenticationProvider {
         var user = userService.getUserByEmail(email);
 
         if (passwordEncoder.matches(password, user.getPassword())) {
-            return new EmailAuthentication(email, password, List.of());
+            return new EmailAuthentication(user, null, List.of());
         } else {
             throw new BadCredentialsException("Bad email or password");
         }

@@ -45,8 +45,7 @@ public class JwtService {
         return Jwts.builder()
                 .setClaims(Map.of(
                         "username", user.getUsername(),
-                        "user_id", user.getId()
-                ))
+                        "user_id", user.getId()))
                 .setIssuer(issuer)
                 .signWith(key)
                 .setExpiration(Date.from(Instant.now().plus(tokenTtl)))

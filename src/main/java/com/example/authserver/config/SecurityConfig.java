@@ -31,8 +31,8 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authenticationProvider(emailAuthenticationProvider)
                 .authenticationProvider(otpAuthenticationProvider)
-                .addFilterAfter(initialLoginFilter, BasicAuthenticationFilter.class)
-                .addFilterAfter(otpLoginFilter, BasicAuthenticationFilter.class);
+                .addFilterBefore(initialLoginFilter, BasicAuthenticationFilter.class)
+                .addFilterBefore(otpLoginFilter, BasicAuthenticationFilter.class);
         return http.build();
     }
 
