@@ -1,7 +1,6 @@
 package com.example.authserver.auth.provider;
 
 import com.example.authserver.auth.authentication.OtpAuthentication;
-import com.example.authserver.data.user.SecurityUser;
 import com.example.authserver.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -10,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @AllArgsConstructor
 public class OtpAuthenticationProvider implements AuthenticationProvider {
@@ -17,12 +18,11 @@ public class OtpAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        var user = (SecurityUser) authentication.getPrincipal();
-        String email = user.getEmail();
-        String otp = String.valueOf(authentication.getCredentials());
+        String email = (String) authentication.getPrincipal();
+        String otp = (String) authentication.getCredentials();
 
         if (authenticationService.checkOtp(email, otp)) {
-            return new OtpAuthentication(email, otp);
+            return new OtpAuthentication(email, otp, List.of());
         } else {
             throw new BadCredentialsException("Invalid otp or email");
         }

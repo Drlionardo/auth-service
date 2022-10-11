@@ -22,6 +22,7 @@ public class UserService implements UserDetailsService {
                 .map(userMapper::map)
                 .orElseThrow(() -> new UserNotFoundException(email));
     }
+
     public SecurityUser getUserById(Long id) {
         return userRepository.findById(id)
                 .map(userMapper::map)

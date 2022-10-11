@@ -1,7 +1,6 @@
 package com.example.authserver.data.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

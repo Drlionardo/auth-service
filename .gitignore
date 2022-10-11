@@ -25,3 +25,4 @@ hs_err_pid*
 /.idea/
 .gradle/7.5/checksums/md5-checksums.bin
 src/main/resources/application-dev.properties
+/build/

@@ -10,7 +10,7 @@ public class UserMapper {
         return new SecurityUser(user);
     }
 
-    public UserDto map (SecurityUser user) {
+    public UserDto map(SecurityUser user) {
         return UserDto.builder()
                 .login(user.getUsername())
                 .email(user.getEmail())
