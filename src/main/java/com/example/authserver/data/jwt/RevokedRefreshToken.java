@@ -1,24 +1,24 @@
-package com.example.authserver.data.otp;
+package com.example.authserver.data.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.Instant;
 
+@Data
 @Entity
 @Builder
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Otp {
+public class RevokedRefreshToken {
     @Id
     private Long userId;
 
-    private String code;
+    private String token;
 
     private Instant expirationTimestamp;
 

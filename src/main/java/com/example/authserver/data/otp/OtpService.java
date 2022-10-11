@@ -24,8 +24,8 @@ public class OtpService {
     @Transactional
     public boolean checkOtp(String email, String code) {
         var user = userService.getUserByEmail(email);
-        var otpFromDb = otpRepository.findByUserIdAndCodeAndCreationDate(user.getId(),
-                code, Instant.now().minus(expirationDuration));
+        var otpFromDb = otpRepository.findByUserIdAndCodeAndExpirationTimestampBefore(user.getId(),
+                code, Instant.now());
         if (otpFromDb.isPresent()) {
             otpRepository.delete(otpFromDb.get());
             return true;
@@ -43,7 +43,7 @@ public class OtpService {
         var otp = Otp.builder()
                 .userId(userId)
                 .code(generateOTP())
-                .creationTime(Instant.now())
+                .expirationTimestamp(Instant.now().minus(expirationDuration))
                 .build();
         return otpRepository.save(otp);
     }
@@ -51,7 +51,7 @@ public class OtpService {
     private String generateOTP() {
         return random.ints(CODE_LENGTH)
                 .boxed()
-                .map(index -> VALID_CHARACTERS.charAt(index % VALID_CHARACTERS.length()))
+                .map(index -> VALID_CHARACTERS.charAt(Math.abs(index) % VALID_CHARACTERS.length()))
                 .map(Object::toString)
                 .collect(Collectors.joining());
     }

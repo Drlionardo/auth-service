@@ -1,13 +1,13 @@
 package com.example.authserver.data.user;
 
 import com.example.authserver.data.user.dto.request.CreateUserDto;
+import com.example.authserver.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Service
@@ -20,11 +20,16 @@ public class UserService implements UserDetailsService {
     public SecurityUser getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .map(userMapper::map)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new UserNotFoundException(email));
+    }
+    public SecurityUser getUserById(Long id) {
+        return userRepository.findById(id)
+                .map(userMapper::map)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<SecurityUser> findUserByEmail(String email) {
+        return userRepository.findByEmail(email).map(userMapper::map);
     }
 
     public User registerUser(CreateUserDto createUserDto) {
@@ -38,7 +43,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void setEmailConfirmed(SecurityUser securityUser) {
-        var user = securityUser.getUser();
+        var user = securityUser.user();
         user.setEmailConfirmed(true);
         userRepository.save(user);
     }

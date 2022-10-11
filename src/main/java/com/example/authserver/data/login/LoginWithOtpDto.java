@@ -5,8 +5,8 @@ import io.micrometer.core.lang.Nullable;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-public record LoginWithEmailDto(
+public record LoginWithOtpDto(
         @Email @NotNull String email,
-        @Nullable String password) {
+        @Nullable String otp) {
 }
 

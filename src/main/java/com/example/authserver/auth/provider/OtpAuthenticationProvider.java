@@ -1,6 +1,7 @@
 package com.example.authserver.auth.provider;
 
 import com.example.authserver.auth.authentication.OtpAuthentication;
+import com.example.authserver.data.user.SecurityUser;
 import com.example.authserver.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -16,7 +17,8 @@ public class OtpAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String email = authentication.getName();
+        var user = (SecurityUser) authentication.getPrincipal();
+        String email = user.getEmail();
         String otp = String.valueOf(authentication.getCredentials());
 
         if (authenticationService.checkOtp(email, otp)) {

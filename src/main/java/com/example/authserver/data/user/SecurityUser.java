@@ -1,18 +1,13 @@
 package com.example.authserver.data.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-@Getter
-public final class SecurityUser implements UserDetails {
-    private final User user;
-
-    public SecurityUser(User user) {
-        this.user = user;
-    }
+public record SecurityUser(@JsonIgnore User user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -32,6 +27,7 @@ public final class SecurityUser implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return user.getPassword();
     }

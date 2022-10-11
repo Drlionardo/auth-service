@@ -2,9 +2,7 @@ package com.example.authserver.data.user;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Builder
@@ -15,6 +13,7 @@ import javax.persistence.Table;
 @Table(name = "usr")
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String login;

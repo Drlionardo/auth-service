@@ -2,11 +2,13 @@ package com.example.authserver.service;
 
 import com.example.authserver.data.jwt.JwtPair;
 import com.example.authserver.data.otp.OtpService;
-import com.example.authserver.data.user.UserMapper;
 import com.example.authserver.data.user.SecurityUser;
+import com.example.authserver.data.user.UserMapper;
 import com.example.authserver.data.user.UserService;
 import com.example.authserver.data.user.dto.request.CreateUserDto;
 import com.example.authserver.data.user.dto.request.ValidateUserEmailDto;
+import com.example.authserver.exception.BadTokenFormatException;
+import com.example.authserver.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,7 +36,6 @@ public class AuthenticationService {
         }
     }
 
-
     @Transactional
     public SecurityUser registerUser(CreateUserDto createUserDto) {
         validateNewUser(createUserDto);
@@ -48,7 +49,7 @@ public class AuthenticationService {
     private void validateNewUser(CreateUserDto createUserDto) {
         var userOptional = userService.findUserByEmail(createUserDto.email());
         if (userOptional.isPresent()) {
-            throw new RuntimeException();
+            throw new UserNotFoundException(createUserDto.email());
         }
     }
 
@@ -69,7 +70,27 @@ public class AuthenticationService {
         return otpService.checkOtp(email, otp);
     }
 
-    public JwtPair generateJwtPair(SecurityUser dto) {
-        jwtService.buildJwt(user);
+    public JwtPair generateJwtPair(SecurityUser user) {
+        var accessToken = jwtService.buildJwt(user);
+        var refreshToken = jwtService.buildRefreshJwt(user);
+        return new JwtPair(accessToken, refreshToken);
+    }
+
+    @Transactional
+    public JwtPair refreshToken(String header) {
+        String refreshToken = getJwtFromHeader(header);
+
+        Long userId = jwtService.getUserIdByRefreshToken(refreshToken);
+        var user = userService.getUserById(userId);
+
+        return generateJwtPair(user);
+    }
+
+    private String getJwtFromHeader(String header) {
+        if (header.startsWith("Bearer ")) {
+            return header.substring(7);
+        } else {
+            throw new BadTokenFormatException(header);
+        }
     }
 }
