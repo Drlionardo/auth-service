@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    "password": ${DATASOURCE_PASSWORD}
+  liquibase:
+    change-log: ""
+  jpa:
+    hibernate:
+      ddl-auto: validate
+jwt:
+  signing-key: ${JWT_SINGING_KEY}
+  issuer: ${JWT_ISSUER}
+otp:
+  length: 6
+  expiration-time-in-hours: 24
+  valid-characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

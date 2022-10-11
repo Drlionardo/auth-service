@@ -1,7 +1,7 @@
 package com.example.authserver.data.otp;
 
 import com.example.authserver.data.user.UserService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -11,15 +11,25 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class OtpService {
     private final OtpRepository otpRepository;
     private final UserService userService;
     private final SecureRandom random = new SecureRandom();
 
-    private final String VALID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private final int CODE_LENGTH = 6;
-    private final Duration expirationDuration = Duration.ofHours(24);
+    private final String VALID_CHARACTERS;
+    private final int CODE_LENGTH;
+    private final Duration EXPIRATION_DURATION;
+
+    public OtpService(OtpRepository otpRepository, UserService userService,
+                      @Value("${otp.valid-characters}") String validCharacters,
+                      @Value("${otp.length}") int codeLength,
+                      @Value("${otp.expiration-time-in-hours}") Duration EXPIRATION_DURATION) {
+        this.otpRepository = otpRepository;
+        this.userService = userService;
+        this.VALID_CHARACTERS = validCharacters;
+        this.CODE_LENGTH = codeLength;
+        this.EXPIRATION_DURATION = EXPIRATION_DURATION;
+    }
 
     @Transactional
     public boolean checkOtp(String email, String code) {
@@ -43,7 +53,7 @@ public class OtpService {
         var otp = Otp.builder()
                 .userId(userId)
                 .code(generateOTP())
-                .expirationTimestamp(Instant.now().minus(expirationDuration))
+                .expirationTimestamp(Instant.now().minus(EXPIRATION_DURATION))
                 .build();
         return otpRepository.save(otp);
     }
