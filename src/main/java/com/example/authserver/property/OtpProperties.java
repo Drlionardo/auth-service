@@ -18,7 +18,7 @@ import java.time.temporal.ChronoUnit;
 @Setter
 @ConfigurationProperties(prefix = "otp")
 public class OtpProperties {
-    private String length;
+    private Long length;
 
     private String validCharacters;
 

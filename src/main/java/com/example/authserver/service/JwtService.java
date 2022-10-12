@@ -4,10 +4,11 @@ import com.example.authserver.data.jwt.RevokeRefreshTokenRepository;
 import com.example.authserver.data.jwt.RevokedRefreshToken;
 import com.example.authserver.data.user.SecurityUser;
 import com.example.authserver.exception.TokenRevokedException;
+import com.example.authserver.property.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -19,18 +20,10 @@ import java.util.Date;
 import java.util.Map;
 
 @Service
+@AllArgsConstructor
 public class JwtService {
-    @Value("${jwt.signing-key}")
-    private String signingKey;
-
-    @Value("${jwt.issuer}")
-    private String issuer;
-
     private final RevokeRefreshTokenRepository revokeRefreshTokenRepository;
-
-    public JwtService(RevokeRefreshTokenRepository revokeRefreshTokenRepository) {
-        this.revokeRefreshTokenRepository = revokeRefreshTokenRepository;
-    }
+    private final JwtProperties jwtProperties;
 
     public String buildJwt(SecurityUser user) {
         return buildJwt(user, Duration.of(1, ChronoUnit.HOURS));
@@ -46,7 +39,7 @@ public class JwtService {
                 .setClaims(Map.of(
                         "username", user.getUsername(),
                         "user_id", user.getId()))
-                .setIssuer(issuer)
+                .setIssuer(jwtProperties.getIssuer())
                 .signWith(key)
                 .setExpiration(Date.from(Instant.now().plus(tokenTtl)))
                 .compact();
@@ -76,13 +69,13 @@ public class JwtService {
         SecretKey key = getSigningKey();
         var jwtParser = Jwts.parserBuilder()
                 .setSigningKey(key)
-                .requireIssuer(issuer)
+                .requireIssuer(jwtProperties.getIssuer())
                 .build();
 
         return jwtParser.parseClaimsJws(refreshToken).getBody();
     }
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(jwtProperties.getSigningKey().getBytes(StandardCharsets.UTF_8));
     }
 }

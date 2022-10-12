@@ -1,39 +1,24 @@
 package com.example.authserver.data.otp;
 
 import com.example.authserver.data.user.UserService;
+import com.example.authserver.property.OtpProperties;
 import com.example.authserver.service.EmailService;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.security.SecureRandom;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class OtpService {
     private final OtpRepository otpRepository;
     private final UserService userService;
     private final EmailService emailService;
+    private final OtpProperties otpProperties;
     private final SecureRandom random = new SecureRandom();
-
-    private final String VALID_CHARACTERS;
-    private final int CODE_LENGTH;
-    private final Duration EXPIRATION_DURATION;
-
-    public OtpService(OtpRepository otpRepository, UserService userService,
-                      EmailService emailService,
-                      @Value("${otp.valid-characters}") String validCharacters,
-                      @Value("${otp.length}") int codeLength,
-                      @Value("${otp.expiration-time-in-hours}") Duration EXPIRATION_DURATION) {
-        this.otpRepository = otpRepository;
-        this.userService = userService;
-        this.emailService = emailService;
-        this.VALID_CHARACTERS = validCharacters;
-        this.CODE_LENGTH = codeLength;
-        this.EXPIRATION_DURATION = EXPIRATION_DURATION;
-    }
 
     @Transactional
     public boolean checkOtp(String email, String code) {
@@ -50,22 +35,23 @@ public class OtpService {
 
     public void sendOtpToEmail(Long userId, String email) {
         var otp = createOtp(userId);
-        emailService.sendSimpleMessage(email,"One time password for registration", otp.getCode());
+        emailService.sendSimpleMessage(email, "One time password for registration", otp.getCode());
     }
 
     private Otp createOtp(Long userId) {
         var otp = Otp.builder()
                 .userId(userId)
                 .code(generateOTP())
-                .expiresAt(Instant.now().minus(EXPIRATION_DURATION))
+                .expiresAt(Instant.now().minus(otpProperties.getExpirationTimeInHours()))
                 .build();
         return otpRepository.save(otp);
     }
 
     private String generateOTP() {
-        return random.ints(CODE_LENGTH)
+        String validCharacters = otpProperties.getValidCharacters();
+        return random.ints(otpProperties.getLength())
                 .boxed()
-                .map(index -> VALID_CHARACTERS.charAt(Math.abs(index) % VALID_CHARACTERS.length()))
+                .map(index -> validCharacters.charAt(Math.abs(index) % validCharacters.length()))
                 .map(Object::toString)
                 .collect(Collectors.joining());
     }

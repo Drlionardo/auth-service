@@ -9,11 +9,8 @@ import com.example.authserver.data.user.dto.request.ConfirmUserEmailDto;
 import com.example.authserver.data.user.dto.request.CreateUserDto;
 import com.example.authserver.exception.BadTokenFormatException;
 import com.example.authserver.exception.UserAlreadyExistsException;
-import com.example.authserver.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
