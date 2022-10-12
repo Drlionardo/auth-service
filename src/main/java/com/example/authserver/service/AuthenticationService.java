@@ -8,6 +8,7 @@ import com.example.authserver.data.user.UserService;
 import com.example.authserver.data.user.dto.request.ConfirmUserEmailDto;
 import com.example.authserver.data.user.dto.request.CreateUserDto;
 import com.example.authserver.exception.BadTokenFormatException;
+import com.example.authserver.exception.UserAlreadyExistsException;
 import com.example.authserver.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,7 @@ public class AuthenticationService {
     private void validateNewUser(CreateUserDto createUserDto) {
         var userOptional = userService.findUserByEmail(createUserDto.email());
         if (userOptional.isPresent()) {
-            throw new UserNotFoundException(createUserDto.email());
+            throw new UserAlreadyExistsException(createUserDto.email());
         }
     }
 

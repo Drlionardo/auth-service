@@ -1,6 +1,7 @@
 package com.example.authserver.data.otp;
 
 import com.example.authserver.data.user.UserService;
+import com.example.authserver.service.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 public class OtpService {
     private final OtpRepository otpRepository;
     private final UserService userService;
+    private final EmailService emailService;
     private final SecureRandom random = new SecureRandom();
 
     private final String VALID_CHARACTERS;
@@ -21,11 +23,13 @@ public class OtpService {
     private final Duration EXPIRATION_DURATION;
 
     public OtpService(OtpRepository otpRepository, UserService userService,
+                      EmailService emailService,
                       @Value("${otp.valid-characters}") String validCharacters,
                       @Value("${otp.length}") int codeLength,
                       @Value("${otp.expiration-time-in-hours}") Duration EXPIRATION_DURATION) {
         this.otpRepository = otpRepository;
         this.userService = userService;
+        this.emailService = emailService;
         this.VALID_CHARACTERS = validCharacters;
         this.CODE_LENGTH = codeLength;
         this.EXPIRATION_DURATION = EXPIRATION_DURATION;
@@ -46,7 +50,7 @@ public class OtpService {
 
     public void sendOtpToEmail(Long userId, String email) {
         var otp = createOtp(userId);
-        //todo: sendCodeHere
+        emailService.sendSimpleMessage(email,"One time password for registration", otp.getCode());
     }
 
     private Otp createOtp(Long userId) {

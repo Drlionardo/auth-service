@@ -4,10 +4,24 @@ spring:
     username: ${DATASOURCE_USERNAME}
     "password": ${DATASOURCE_PASSWORD}
   liquibase:
-    change-log: ""
+    change-log: "classpath:/db/changelog/db.changelog-master.yaml"
   jpa:
     hibernate:
       ddl-auto: validate
+  mail:
+    host: ${MAIL_SMTP_HOST}
+    port: 465
+    protocol: "smtps"
+    username: ${MAIL_SMTP_USERNAME}
+    password: ${MAIL_SMTP_PASSWORD}
+    from: ${MAIL_FROM}
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
 jwt:
   signing-key: ${JWT_SINGING_KEY}
   issuer: ${JWT_ISSUER}
