@@ -20,6 +20,6 @@ public class Otp {
 
     private String code;
 
-    private Instant expirationTimestamp;
+    private Instant expiresAt;
 
 }

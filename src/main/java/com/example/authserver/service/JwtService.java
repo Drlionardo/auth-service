@@ -66,7 +66,7 @@ public class JwtService {
         var revokedToken = RevokedRefreshToken.builder()
                 .userId(claims.get("user_id", Long.class))
                 .token(refreshToken)
-                .expirationTimestamp(claims.getExpiration().toInstant())
+                .expiresAt(claims.getExpiration().toInstant())
                 .build();
 
         revokeRefreshTokenRepository.save(revokedToken);

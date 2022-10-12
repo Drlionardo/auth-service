@@ -34,7 +34,7 @@ public class OtpService {
     @Transactional
     public boolean checkOtp(String email, String code) {
         var user = userService.getUserByEmail(email);
-        var otpFromDb = otpRepository.findByUserIdAndCodeAndExpirationTimestampBefore(user.getId(),
+        var otpFromDb = otpRepository.findByUserIdAndCodeAndExpiresAtBefore(user.getId(),
                 code, Instant.now());
         if (otpFromDb.isPresent()) {
             otpRepository.delete(otpFromDb.get());
@@ -53,7 +53,7 @@ public class OtpService {
         var otp = Otp.builder()
                 .userId(userId)
                 .code(generateOTP())
-                .expirationTimestamp(Instant.now().minus(EXPIRATION_DURATION))
+                .expiresAt(Instant.now().minus(EXPIRATION_DURATION))
                 .build();
         return otpRepository.save(otp);
     }

@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface OtpRepository extends JpaRepository<Otp, Long> {
-    Optional<Otp> findByUserIdAndCodeAndExpirationTimestampBefore(Long userId, String code, Instant expirationTimestamp);
+    Optional<Otp> findByUserIdAndCodeAndExpiresAtBefore(Long userId, String code, Instant expirationTimestamp);
 }
