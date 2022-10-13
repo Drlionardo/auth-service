@@ -35,6 +35,8 @@ dependencies {
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
 	implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.0'
 
+	compileOnly('com.sun.activation:jakarta.activation')
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
