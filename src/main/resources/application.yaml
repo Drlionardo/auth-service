@@ -30,4 +30,4 @@ otp:
   expiration-time-in-hours: 24
   valid-characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 server:
-  port: 80
+  port: ${SERVER_PORT:8080}
