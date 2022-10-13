@@ -22,10 +22,6 @@ jobs:
       uses: gradle/gradle-build-action@v2
       with:
         arguments: test
-    - name: Build docker image with gradle bootBuildImage
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: gradle bootBuildImage -imageName $IMAGE_NAME
     - name: Login to Y.Cloud Container Registry
       env: 
           REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
