@@ -45,7 +45,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
-
+configurations.all {
+	exclude group: "com.sun.xml.bind", module:"jaxb-core"
+	exclude group: "org.eclipse.angus", module:"angus-activation"
+}
 tasks.named('test') {
 	useJUnitPlatform()
 }
