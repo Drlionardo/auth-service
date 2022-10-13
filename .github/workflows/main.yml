@@ -22,6 +22,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Generate Gradle Wrapper
+      run: ./gradlew wrapper
+    - name: Gradle Wrapper Validation
+      uses: gradle/wrapper-validation-action@v1.0.4
     - name: Run tests with Gradle
       run: ./gradlew test
   push:
@@ -32,12 +38,6 @@ jobs:
       env: 
           REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
       run: echo "${REGISTRY_TOKEN}" | docker login cr.yandex -u json_key --password-stdin
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Generate Gradle Wrapper
-      run: ./gradlew wrapper
-    - name: Gradle Wrapper Validation
-      uses: gradle/wrapper-validation-action@v1.0.4
     - name: Build a container image from our Spring Boot app using Paketo.io / Cloud Native Build Packs
       run: ./gradlew bootBuildImage --imageName=$IMAGE_NAME
     - name: Tag & publish to Container Registry
