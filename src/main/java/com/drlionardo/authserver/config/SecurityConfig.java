@@ -25,7 +25,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorize -> authorize
-                        .mvcMatchers("/register**", "/refresh").permitAll()
+                        .mvcMatchers("/register**", "/refresh", "/ping").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()

@@ -1,3 +1,4 @@
+
 spring:
   datasource:
     url: ${DATASOURCE_URL}
@@ -29,3 +30,5 @@ otp:
   length: 6
   expiration-time-in-hours: 24
   valid-characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+server:
+  port: 80
