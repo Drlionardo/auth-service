@@ -1,0 +1,50 @@
+name: Build, test and deploy docker image to Y.Cloud Container Registry
+on:
+  push:
+    branches: [ main ]
+env:
+  IMAGE_NAME: auth-server
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run tests with Gradle
+      run: ./gradlew test
+  push:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Login to Y.Cloud Container Registry
+      env: 
+          REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+      run: echo "${REGISTRY_TOKEN}" | docker login cr.yandex -u json_key --password-stdin
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Generate Gradle Wrapper
+      run: ./gradlew wrapper
+    - name: Gradle Wrapper Validation
+      uses: gradle/wrapper-validation-action@v1.0.4
+    - name: Build a container image from our Spring Boot app using Paketo.io / Cloud Native Build Packs
+      run: ./gradlew bootBuildImage --imageName=$IMAGE_NAME
+    - name: Tag & publish to Container Registry
+      env: 
+        CONTAINER_REGISTRY_ID: ${{ secrets.CONTAINER_REGISTRY_ID }}
+      run: |
+        IMAGE_ID=cr.yandex/${CONTAINER_REGISTRY_ID}/$IMAGE_NAME
+        VERSION=latest
+        docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+        docker push $IMAGE_ID:$VERSION
